@@ -67,7 +67,7 @@ assert SCALE_FACTOR > 0, "SCALE_FACTOR must be > 0."
 # If set, removes the first N trials for each test from all reported statistics. Useful for
 # tests which have outlier behavior due to JIT and other system cache warm-ups. If any test
 # returns fewer N + 1 results, an exception is thrown.
-IGNORED_TRIALS = 2
+IGNORED_TRIALS = 1
 
 # Command used to launch Scala or Java.
 
@@ -93,7 +93,7 @@ COMMON_OPTS = [
     # How many times to run each experiment - used to warm up system caches.
     # This OptionSet should probably only have a single value (i.e., length 1)
     # since it doesn't make sense to have multiple values here.
-    OptionSet("num-trials", [10]),
+    OptionSet("num-trials", [5]),
     # Extra pause added between trials, in seconds. For runs with large amounts
     # of shuffle data, this gives time for buffer cache write-back.
     OptionSet("inter-trial-wait", [3])
@@ -144,20 +144,9 @@ SPARK_KEY_VAL_TEST_OPTS = [
 SPARK_KV_OPTS = COMMON_OPTS + SPARK_KEY_VAL_TEST_OPTS
 SPARK_TESTS = []
 
-SCHEDULING_THROUGHPUT_OPTS = [
-    # The number of tasks that should be launched in each job:
-    OptionSet("num-tasks", [10 * 1000]),
-    # The number of jobs that should be run:
-    OptionSet("num-jobs", [1]),
-    # The size of the task closure (in bytes):
-    OptionSet("closure-size", [0]),
-    # A random seed to make tests reproducible:
-    OptionSet("random-seed", [5]),
-]
-
 #SPARK_TESTS += [("scheduling-throughput", "spark.perf.TestRunner",
 #    SCALE_FACTOR, COMMON_JAVA_OPTS, 
-#    [ConstantOption("scheduling-throughput")] + COMMON_OPTS + SCHEDULING_THROUGHPUT_OPTS)]
+#    [ConstantOption("scheduling-throughput"), OptionSet("num-tasks", [10 * 1000])] + COMMON_OPTS)]
 
 #SPARK_TESTS += [("scala-agg-by-key", "spark.perf.TestRunner", SCALE_FACTOR,
 #    COMMON_JAVA_OPTS, [ConstantOption("aggregate-by-key")] + SPARK_KV_OPTS)]
@@ -297,7 +286,7 @@ else:
 # operations on MLlib algorithms.
 MLLIB_COMMON_OPTS = COMMON_OPTS + [
     # The number of input partitions.
-    OptionSet("num-partitions", [400], can_scale=True),
+    OptionSet("num-partitions", [128], can_scale=True),
     # A random seed to make tests reproducable.
     OptionSet("random-seed", [5])
 ]
@@ -315,7 +304,7 @@ MLLIB_REGRESSION_CLASSIFICATION_TEST_OPTS = MLLIB_COMMON_OPTS + [
 # Generalized Linear Model (GLM) Tests #
 MLLIB_GLM_TEST_OPTS = MLLIB_REGRESSION_CLASSIFICATION_TEST_OPTS + [
     # The number of iterations for SGD
-    OptionSet("num-iterations", [100]),
+    OptionSet("num-iterations", [20]),
     # The step size for SGD
     OptionSet("step-size", [0.05]),
     # Regularization type: none, L1, L2
@@ -377,9 +366,9 @@ MLLIB_TESTS += [("naive-bayes", "mllib.perf." + MLLIB_SPARK_VERSION_STR + ".Test
 # Decision Trees #
 MLLIB_DECISION_TREE_TEST_OPTS = MLLIB_COMMON_OPTS + [
     # The number of rows or examples
-    OptionSet("num-examples", [2000], can_scale=True),
+    OptionSet("num-examples", [1000000], can_scale=True),
     # The number of features per example
-    OptionSet("num-features", [10], can_scale=True),
+    OptionSet("num-features", [500], can_scale=True),
     # Type of label: 0 indicates regression, 2+ indicates classification with this many classes
     # Note: multi-class (>2) is not supported in Spark 1.0.
     OptionSet("label-type", [0, 2], can_scale=False),
@@ -390,9 +379,9 @@ MLLIB_DECISION_TREE_TEST_OPTS = MLLIB_COMMON_OPTS + [
     # Depth of true decision tree model used to label examples.
     # WARNING: The meaning of depth changed from Spark 1.0 to Spark 1.1:
     #          depth=N for Spark 1.0 should be depth=N-1 for Spark 1.1
-    OptionSet("tree-depth", [1, 5], can_scale=False),
+    OptionSet("tree-depth", [1, 10], can_scale=False),
     # Maximum number of bins for the decision tree learning algorithm.
-    OptionSet("max-bins", [100], can_scale=False),
+    OptionSet("max-bins", [32], can_scale=False),
 ]
 
 if MLLIB_SPARK_VERSION >= 1.2:
