@@ -118,9 +118,13 @@ if has_spark_tests:
     SparkTests.run_tests(cluster, config, config.SPARK_TESTS, "Spark-Tests",
                          config.SPARK_OUTPUT_FILENAME)
 
-if config.PYSPARK_TESTS:
+if not config.PYSPARK_CORE_SKIP_TESTS and config.PYSPARK_TESTS:
     PythonTests.run_tests(cluster, config, config.PYSPARK_TESTS, "PySpark-Tests",
                           config.PYSPARK_OUTPUT_FILENAME)
+
+if not config.PYSPARK_MLLIB_SKIP_TESTS and config.PYSPARK_MLLIB_TESTS:
+    PythonTests.run_tests(cluster, config, config.PYSPARK_MLLIB_TESTS, "PySpark-MLlib-Tests",
+                          config.PYSPARK_MLLIB_OUTPUT_FILENAME)
 
 if has_streaming_tests:
     StreamingTests.run_tests(cluster, config, config.STREAMING_TESTS, "Streaming-Tests",
