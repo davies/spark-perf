@@ -43,11 +43,12 @@ should_prep_spark = not config.USE_CLUSTER_SPARK
 # Since Spark is always going to prepared, streaming and mllib do not require extra preparation
 has_streaming_tests = not config.STREAMING_SKIP_TESTS and (len(config.STREAMING_TESTS) > 0)
 has_mllib_tests = not config.MLLIB_SKIP_TESTS and (len(config.MLLIB_TESTS) > 0)
+has_python_mllib_tests = not config.PYSPARK_MLLIB_SKIP_TESTS and (len(config.PYSPARK_MLLIB_TESTS) > 0)
 
 # Only build the perf test sources that will be used.
 should_prep_spark_tests = has_spark_tests and not config.SPARK_SKIP_TEST_PREP
 should_prep_streaming_tests = has_streaming_tests and not config.STREAMING_SKIP_TEST_PREP
-should_prep_mllib_tests = has_mllib_tests and not config.MLLIB_SKIP_TEST_PREP
+should_prep_mllib_tests = (has_mllib_tests or has_python_mllib_tests) and not config.MLLIB_SKIP_TEST_PREP
 
 # Do disk warmup only if there are tests to run.
 should_warmup_disk = has_spark_tests and not config.SKIP_DISK_WARMUP
