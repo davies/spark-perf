@@ -217,20 +217,20 @@ if __name__ == "__main__":
     import optparse
     parser = optparse.OptionParser(usage="Usage: %prog [options] test_names")
     # COMMON_OPTS
-    parser.add_option("--num-trials", type="int", default=1)
+    parser.add_option("--num-trials", type="int", default=2)
     parser.add_option("--inter-trial-wait", type="int", default=3)
     # MLLIB_COMMON_OPTS
-    parser.add_option("--num-partitions", type="int", default=10)
+    parser.add_option("--num-partitions", type="int", default=100)
     parser.add_option("--random-seed", type="int", default=5)
     parser.add_option("--num-iterations", type="int", default=20)
     parser.add_option("--reg-param", type="float", default=0.1)
     # MLLIB_REGRESSION_CLASSIFICATION_TEST_OPTS
-    parser.add_option("--num-examples", type="int", default=1024)
-    parser.add_option("--num-features", type="int", default=50)
+    parser.add_option("--num-examples", type="int", default=100000)
+    parser.add_option("--num-features", type="int", default=10000)
     # MLLIB_GLM_TEST_OPTS
-    parser.add_option("--step-size", type="float", default=0.1)
-    parser.add_option("--reg-type", type="string", default="none")
-    parser.add_option("--loss", type="string", default="L2")
+    parser.add_option("--step-size", type="float", default=0.05)
+    parser.add_option("--reg-type", type="string", default=None)
+    parser.add_option("--loss", type="string", default="logistic")
     parser.add_option("--optimizer", type="string", default="sgd")
     # MLLIB_GLM_REGRESSION_TEST_OPTS
     parser.add_option("--intercept", type="float", default=0.0)
@@ -295,3 +295,4 @@ if __name__ == "__main__":
                                   "results": results},
                                  separators=(',', ':'))  # use separators for compact encoding
         print "results: " + jsonResults
+        time.sleep(1000)
